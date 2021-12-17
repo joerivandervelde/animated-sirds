@@ -101,7 +101,7 @@ public class AnimatedSIRDS {
 
     }
 
-    private int[] PixelsToIntMatrix(Pixel[][] in)
+    public static int[] PixelsToIntMatrix(Pixel[][] in)
     {
         System.out.println("in.length = " + in.length);
         System.out.println("in[0].length = " + in[0].length);
