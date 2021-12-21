@@ -19,5 +19,12 @@ public class Pixel {
         this.B = (short)rgb[2];
     }
 
+    public Pixel(short R, short G, short B)
+    {
+        this.R = R;
+        this.G = G;
+        this.B = B;
+    }
+
 
 }
