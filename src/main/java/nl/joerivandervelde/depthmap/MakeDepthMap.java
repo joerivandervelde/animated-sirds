@@ -39,23 +39,34 @@ public class MakeDepthMap {
      */
     public void go() throws IOException {
         GifSequenceWriter writer = null;
-
+        int nrOfFrames = 100;
+        int frameDelayMS = 20;
+        double radiusDistanceScale = 0.4; // 0-1, sphere radius decreases by this factor from closest to farthest
+        double depthDistanceScale = 0.4; // 0-1, depth value decreases by this factor from closest to farthest
         int xOffset = 200;
         int yOffset = 100;
         int zOffset = -100;
-        double radius = 100d;
-        int resolution = 4;
-        Coordinate[] coords = new Coordinate[resolution];
-        for(int i = 0; i < resolution; i ++){
-            final double angle = Math.toRadians(((double) i / resolution) * 360d);
-            coords[i] = new Coordinate((Math.cos(angle) * radius) + xOffset, 0 + yOffset, (Math.sin(angle) * radius) + zOffset);
+        double orbitRadius = 100d;
+        double sphereRadius = 75;
+
+        Coordinate[] coords = new Coordinate[nrOfFrames];
+        for(int i = 0; i < nrOfFrames; i ++){
+            final double angle = Math.toRadians(((double) i / nrOfFrames) * 360d);
+            coords[i] = new Coordinate((Math.cos(angle) * orbitRadius) + xOffset, 0 + yOffset, (Math.sin(angle) * orbitRadius) + zOffset);
         }
 
         System.out.println(Arrays.toString(coords));
 
         for(Coordinate c : coords)
         {
-            Pixel[][] sis = makeSphere(400, 200, c, 75);
+            // scale sphereRadius based on the Z value, orbitRadius and radiusDistanceScale
+            //System.out.println(75 * c.z * orbitRadius * radiusDistanceScale);
+            // sphereRadius = 75 at close
+            // radiusDistanceScale 0.4 so 30 at far
+            // so, x 0.4 + 0 (far) to x 0.4 + 0.6 (close)
+            double sphereRadiusScaledByDistance = (sphereRadius * (radiusDistanceScale + (((1.0-radiusDistanceScale)*(c.z/(-orbitRadius*2))))));
+            double depthScale = (depthDistanceScale + (((1.0-depthDistanceScale)*(c.z/(-orbitRadius*2)))));
+            Pixel[][] sis = drawSphereInFrame(400, 200, c, sphereRadiusScaledByDistance, depthScale);
             int[] sisToInt = PixelsToIntMatrix(sis);
 
             // todo: code dup
@@ -71,7 +82,7 @@ public class MakeDepthMap {
             {
                 System.out.println("creating writer...");
                 ImageOutputStream fos = new FileImageOutputStream(outputGIF);
-                writer = new GifSequenceWriter(fos, imgfrnew.getImage().getType(), imgfrnew.getDelay(), true);
+                writer = new GifSequenceWriter(fos, imgfrnew.getImage().getType(), frameDelayMS, true);
             }
             writer.writeToSequence(imgfrnew.getImage());
         }
@@ -79,7 +90,7 @@ public class MakeDepthMap {
     }
 
     // todo: size and color based on distance because depth map
-    public Pixel[][] makeSphere(int frameWidth, int frameHeight, Coordinate sphereCoords, int radius)
+    public Pixel[][] drawSphereInFrame(int frameWidth, int frameHeight, Coordinate sphereCoords, double radius, double depthScale)
     {
         Pixel[][] out = new Pixel[frameWidth][frameHeight];
 
@@ -92,9 +103,12 @@ public class MakeDepthMap {
         //draw 3D sphere in 2D
         for(double x = -radius; x < radius; x++ ){
             for(double y = -radius; y < radius; y++ ){
-                for(double z = -radius; z < radius; z++ ){
+                // start Z at 0 since no point in rendering the 'back half' pf the sphere
+                for(double z = 0; z < radius; z++ ){
                     if(Math.sqrt((x * x) + (y * y) + (z * z)) <= radius){
-                        out[(int) x+radius][(int)y+radius] = new Pixel((short)z);
+                        short zScaled = (short) (z * (255.0/radius));
+              //              System.out.println("x = " + x + " , radius = " + radius + ", coordsX = " + sphereCoords.x);
+                        out[(int)x+sphereCoords.x][(int)y+sphereCoords.y] = new Pixel((short)(zScaled * depthScale));
                     }
                 }
             }
