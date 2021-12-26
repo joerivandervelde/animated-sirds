@@ -3,18 +3,15 @@ package nl.joerivandervelde.depthmap;
 import nl.joerivandervelde.asirds.GifSequenceWriter;
 import nl.joerivandervelde.asirds.ImageFrame;
 import nl.joerivandervelde.asirds.Pixel;
-import nl.joerivandervelde.asirds.Thimbleby;
 
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
-import java.awt.*;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 
-import static nl.joerivandervelde.asirds.AnimatedSIRDS.PixelsToIntMatrix;
+import static nl.joerivandervelde.asirds.AnimatedSIRDS.PixelsToIntMatrixRGBA;
 
 public class MakeDepthMap {
 
@@ -39,8 +36,8 @@ public class MakeDepthMap {
      */
     public void go() throws IOException {
         GifSequenceWriter writer = null;
-        int nrOfFrames = 100;
-        int frameDelayMS = 20;
+        int nrOfFrames = 64;
+        int frameDelayMS = 5;
         double radiusDistanceScale = 0.4; // 0-1, sphere radius decreases by this factor from closest to farthest
         double depthDistanceScale = 0.4; // 0-1, depth value decreases by this factor from closest to farthest
         int xOffset = 200;
@@ -55,8 +52,6 @@ public class MakeDepthMap {
             coords[i] = new Coordinate((Math.cos(angle) * orbitRadius) + xOffset, 0 + yOffset, (Math.sin(angle) * orbitRadius) + zOffset);
         }
 
-        System.out.println(Arrays.toString(coords));
-
         for(Coordinate c : coords)
         {
             // scale sphereRadius based on the Z value, orbitRadius and radiusDistanceScale
@@ -67,13 +62,12 @@ public class MakeDepthMap {
             double sphereRadiusScaledByDistance = (sphereRadius * (radiusDistanceScale + (((1.0-radiusDistanceScale)*(c.z/(-orbitRadius*2))))));
             double depthScale = (depthDistanceScale + (((1.0-depthDistanceScale)*(c.z/(-orbitRadius*2)))));
             Pixel[][] sis = drawSphereInFrame(400, 200, c, sphereRadiusScaledByDistance, depthScale);
-            int[] sisToInt = PixelsToIntMatrix(sis);
+            int[] sisToInt = PixelsToIntMatrixRGBA(sis);
 
             // todo: code dup
             DataBufferInt buffer = new DataBufferInt(sisToInt, sisToInt.length);
             int[] bandMasks = {0xFF0000, 0xFF00, 0xFF, 0xFF000000}; // ARGB (yes, ARGB, as the masks are R, G, B, A always) order
             WritableRaster rasternew = Raster.createPackedRaster(buffer, sis.length, sis[0].length, sis.length, bandMasks, null);
-            System.out.println("rasternew: " + rasternew);
             ColorModel cm = ColorModel.getRGBdefault();
             BufferedImage bi = new BufferedImage(cm, rasternew, cm.isAlphaPremultiplied(), null);
             ImageFrame imgfrnew = new ImageFrame(bi);
@@ -107,7 +101,6 @@ public class MakeDepthMap {
                 for(double z = 0; z < radius; z++ ){
                     if(Math.sqrt((x * x) + (y * y) + (z * z)) <= radius){
                         short zScaled = (short) (z * (255.0/radius));
-              //              System.out.println("x = " + x + " , radius = " + radius + ", coordsX = " + sphereCoords.x);
                         out[(int)x+sphereCoords.x][(int)y+sphereCoords.y] = new Pixel((short)(zScaled * depthScale));
                     }
                 }
