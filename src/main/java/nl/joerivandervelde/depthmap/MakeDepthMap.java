@@ -16,9 +16,13 @@ import static nl.joerivandervelde.asirds.AnimatedSIRDS.PixelsToIntMatrixRGBA;
 public class MakeDepthMap {
 
     File outputGIF;
+    double radiusDistanceScale; // 0-1, sphere radius decreases by this factor from closest to farthest
+    double depthDistanceScale; // 0-1, depth value decreases by this factor from closest to farthest
 
-    public MakeDepthMap(File outputGIF){
+    public MakeDepthMap(File outputGIF, double radiusDistanceScale, double depthDistanceScale){
         this.outputGIF = outputGIF;
+        this.radiusDistanceScale = radiusDistanceScale;
+        this.depthDistanceScale = depthDistanceScale;
     }
 
     /**
@@ -38,8 +42,6 @@ public class MakeDepthMap {
         GifSequenceWriter writer = null;
         int nrOfFrames = 64;
         int frameDelayMS = 5;
-        double radiusDistanceScale = 0.4; // 0-1, sphere radius decreases by this factor from closest to farthest
-        double depthDistanceScale = 0.4; // 0-1, depth value decreases by this factor from closest to farthest
         int xOffset = 200;
         int yOffset = 100;
         int zOffset = -100;
@@ -106,7 +108,6 @@ public class MakeDepthMap {
                 }
             }
         }
-
         return out;
     }
 

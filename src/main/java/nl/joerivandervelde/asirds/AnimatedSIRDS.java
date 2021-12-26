@@ -12,13 +12,15 @@ public class AnimatedSIRDS {
 
     File input;
     File output;
+    boolean noisy; // new random image for each frame, or reuse the same each time
+
     final static boolean COLOR_IMG = false;
 
-
-    public AnimatedSIRDS(File input, File output)
+    public AnimatedSIRDS(File input, File output, boolean noisy)
     {
         this.input = input;
         this.output = output;
+        this.noisy = noisy;
         if(output.exists())
         {
             output.delete();
@@ -31,10 +33,9 @@ public class AnimatedSIRDS {
         ImageFrame[] imgf = ReadGIF.readGif(fis);
         System.out.println("INFO: read gif with " + imgf.length + " frames, type: " + imgf[0].getImage().getType() + ", delay: " + imgf[0].getDelay() + ", height: " + imgf[0].getHeight() + ", width: " + imgf[0].getWidth() + ", disposal: " + imgf[0].getDisposal());
 
-        System.out.println("random img for embedding...");
+        System.out.println("random img for embedding reuse (non-noisy)...");
         BufferedImage ff = imgf[0].getImage();
         BufferedImage embedIn = rndImg(ff.getWidth(), ff.getHeight());
-
 
         System.out.println("set up gif sequence output writer...");
         ImageOutputStream fos = new FileImageOutputStream(output);
@@ -79,9 +80,7 @@ public class AnimatedSIRDS {
                 }
             }
 
-            //Pixel[][] sis = Thimbleby.DrawAutoStereogram(Z, embedIn.getRaster());
-            Pixel[][] sis = Thimbleby.DrawAutoStereogram(Z, null);
-
+            Pixel[][] sis = Thimbleby.DrawAutoStereogram(Z, noisy ? null : embedIn.getRaster());
             BufferedImage bi = null;
 
             if(COLOR_IMG) {
