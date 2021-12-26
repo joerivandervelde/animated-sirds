@@ -12,6 +12,7 @@ public class AnimatedSIRDS {
 
     File input;
     File output;
+    final static boolean COLOR_IMG = false;
 
 
     public AnimatedSIRDS(File input, File output)
@@ -39,6 +40,7 @@ public class AnimatedSIRDS {
         ImageOutputStream fos = new FileImageOutputStream(output);
         GifSequenceWriter writer =
                 new GifSequenceWriter(fos, imgf[0].getImage().getType(), imgf[0].getDelay(), true);
+        System.out.println("delay = " + imgf[0].getDelay());
 
 
         System.out.println("transform to sirds...");
@@ -66,47 +68,49 @@ public class AnimatedSIRDS {
                     }
                 }
             }
-            System.out.println("frame = " + f);
-            System.out.println("depthMax = " + depthMax);
-            System.out.println("depthMin = " + depthMin);
 
             // scale depth map to 0-1
             float[][] Z = new float[raster.getWidth()][raster.getHeight()];
             for (int i = 0; i < raster.getWidth(); i++) {
                 for (int j = 0; j < raster.getHeight(); j++) {
-
                     // lineair interpolation
                     Z[i][j] = (img[i][j][0] - depthMin) /
                             (float) (depthMax - depthMin);
                 }
             }
-            Pixel[][] sis = Thimbleby.DrawAutoStereogram(Z, embedIn.getRaster());
-            int[] sisToInt = PixelsToIntMatrix(sis);
 
-            DataBufferInt buffer = new DataBufferInt(sisToInt, sisToInt.length);
-            int[] bandMasks = {0xFF0000, 0xFF00, 0xFF, 0xFF000000}; // ARGB (yes, ARGB, as the masks are R, G, B, A always) order
-            WritableRaster rasternew = Raster.createPackedRaster(buffer, raster.getWidth(), raster.getHeight(), raster.getWidth(), bandMasks, null);
-            System.out.println("rasternew: " + rasternew);
+            //Pixel[][] sis = Thimbleby.DrawAutoStereogram(Z, embedIn.getRaster());
+            Pixel[][] sis = Thimbleby.DrawAutoStereogram(Z, null);
 
-            ColorModel cm = ColorModel.getRGBdefault();
-            BufferedImage bi = new BufferedImage(cm, rasternew, cm.isAlphaPremultiplied(), null);
+            BufferedImage bi = null;
+
+            if(COLOR_IMG) {
+                int[] sisToInt = PixelsToIntMatrixRGBA(sis);
+                DataBufferInt buffer = new DataBufferInt(sisToInt, sisToInt.length);
+                int[] bandMasks = {0xFF0000, 0xFF00, 0xFF, 0xFF000000}; // ARGB (yes, ARGB, as the masks are R, G, B, A always) order
+                WritableRaster wraster = Raster.createPackedRaster(buffer, raster.getWidth(), raster.getHeight(), raster.getWidth(), bandMasks, null);
+                ColorModel cm = ColorModel.getRGBdefault();
+                bi = new BufferedImage(cm, wraster, cm.isAlphaPremultiplied(), null);
+                bi.setData(wraster);
+            }
+            else{
+                byte[] sisToInt = PixelsToIntMatrixGrayscale(sis);
+                DataBufferByte buffer = new DataBufferByte(sisToInt, sisToInt.length);
+                int[] bandMasks = {0xFF}; // only one for grayscale
+                WritableRaster wraster = Raster.createPackedRaster(buffer, raster.getWidth(), raster.getHeight(), raster.getWidth(), bandMasks, null);
+                bi = new BufferedImage(raster.getWidth(), raster.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
+                bi.setData(wraster);
+            }
             ImageFrame imgfrnew = new ImageFrame(bi);
             writer.writeToSequence(imgfrnew.getImage());
-
-
         }
-
         writer.close();
         fos.close();
 
     }
 
-    public static int[] PixelsToIntMatrix(Pixel[][] in)
+    public static int[] PixelsToIntMatrixRGBA(Pixel[][] in)
     {
-        System.out.println("in.length = " + in.length);
-        System.out.println("in[0].length = " + in[0].length);
-        System.out.println("int[] size = " + in.length * in[0].length);
-
         int[] out = new int[in.length * in[0].length];
         for(int i=0; i<in.length; i++)
         {
@@ -115,7 +119,24 @@ public class AnimatedSIRDS {
                 out[(j*in.length)+i] = 0xff000000 | (in[i][j].R & 0xff) << 16 | (in[i][j].G & 0xff) << 8 | (in[i][j].B & 0xff);
             }
         }
+        return out;
+    }
 
+    /**
+     * Assumes input R == G == B, using B channel
+     * @param in
+     * @return
+     */
+    public static byte[] PixelsToIntMatrixGrayscale(Pixel[][] in)
+    {
+        byte[] out = new byte[in.length * in[0].length];
+        for(int i=0; i<in.length; i++)
+        {
+            for(int j=0; j<in[i].length ; j++)
+            {
+                out[(j*in.length)+i] = (byte) (in[i][j].B);
+            }
+        }
         return out;
     }
 
