@@ -21,7 +21,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 
 /**
- * adapted from:
+ * adapted from Alex Orzechowski at Stack Overflow:
  * https://stackoverflow.com/questions/8933893/convert-each-animated-gif-frame-to-a-separate-bufferedimage
  */
 public class ReadGIF {

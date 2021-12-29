@@ -1,6 +1,11 @@
 package nl.joerivandervelde.asirds.util;
 
 import java.awt.image.BufferedImage;
+
+/**
+ * adapted from Alex Orzechowski at Stack Overflow:
+ * https://stackoverflow.com/questions/8933893/convert-each-animated-gif-frame-to-a-separate-bufferedimage
+ */
 public class ImageFrame {
 
     private final int delay;
