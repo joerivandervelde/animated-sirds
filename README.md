@@ -27,29 +27,40 @@ When converted to an animated SIRDS (ASIRDS), the result is a smoothly orbiting 
 ## Question 1: reusing the pattern?
 
 In the previous image, we generate a new random dot pattern for each frame.
-This seems to be what people normally do for these type of images.
-But is that necessary? What happens if we simply re-use the random dot pattern from the first frame, for all of the following frames?
+This seems to be what people normally do for these type of animations.
+But is that necessary? What happens if we simply re-use the random dot pattern from the first frame, for all following frames?
 
 We use the same starting image as before.
 
 ![a-sphere-r0.4-d0.1.gif](gifs/a-sphere-r0.4-d0.1.gif)
 
-But now we re-use the pattern for each frame. The result is
+But now we re-use the pattern for each frame. The result is a calmer image where the sphere can still be seen moving.
+However, background echos from the stereoscopic encoding technique seem to make it nearly impossible to track the sphere in 3D. 
 
 ![b-sphere-r0.4-d0.1-calm.gif](gifs/b-sphere-r0.4-d0.1-calm.gif)
 
 ## Question 2: no depth scaling?
 
+What would happen if we disable the scaling of the grayscale depth values with distance?
+The input image is similar to that of before, except the sphere is equally bright at all positions.
+
 ![c-sphere-r0.4-d1.0.gif](gifs/c-sphere-r0.4-d1.0.gif)
+
+The result is at first glance similar to our reference image, but tracking the sphere around its farthest point feels less natural and requires more effort.
 
 ![c-sphere-r0.4-d1.0-noisy.gif](gifs/c-sphere-r0.4-d1.0-noisy.gif)
 
 ## Question 3: no radius scaling?
 
+Finally, what happens if we disable scaling of the sphere's radius but leave depth scaling untouched?
+The input image then looks like this:
+
 ![d-sphere-r1.0-d0.1.gif](gifs/d-sphere-r1.0-d0.1.gif)
+
+When viewed as an animated SIRDS, we see the sphere emerge from the background, move to the right, 'submerge', and re-appear on the left.
 
 ![d-sphere-r1.0-d0.1-noisy.gif](gifs/d-sphere-r1.0-d0.1-noisy.gif)
 
 ## Conclusion
 
-Convincing animated SIRDS must make use of 
+A convincing animated SIRDS requires both depth scaling proportional to object size and a fresh random dot pattern for each frame.
