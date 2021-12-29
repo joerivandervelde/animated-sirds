@@ -1,4 +1,4 @@
-package nl.joerivandervelde.asirds;
+package nl.joerivandervelde.asirds.gif;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import nl.joerivandervelde.asirds.util.ImageFrame;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
@@ -172,7 +173,6 @@ public class ReadGIF {
                     copy = new BufferedImage(model, raster, alpha, null);
                 }
                 frames.add(new ImageFrame(copy, delay, disposal, image.getWidth(), image.getHeight()));
-                System.out.println("DEBUG: frames.add");
             }
 
             master.flush();

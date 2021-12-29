@@ -1,4 +1,4 @@
-package nl.joerivandervelde.depthmap;
+package nl.joerivandervelde.asirds.depthmap;
 
 public class Coordinate {
     final int x;

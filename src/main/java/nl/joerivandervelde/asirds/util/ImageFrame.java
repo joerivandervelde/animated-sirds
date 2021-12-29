@@ -1,7 +1,8 @@
-package nl.joerivandervelde.asirds;
+package nl.joerivandervelde.asirds.util;
 
 import java.awt.image.BufferedImage;
 public class ImageFrame {
+
     private final int delay;
     private final BufferedImage image;
     private final String disposal;

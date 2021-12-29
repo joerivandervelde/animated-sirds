@@ -8,7 +8,7 @@
 // http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative
 // Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
 
-package nl.joerivandervelde.asirds;
+package nl.joerivandervelde.asirds.gif;
 import javax.imageio.*;
 import javax.imageio.metadata.*;
 import javax.imageio.stream.*;

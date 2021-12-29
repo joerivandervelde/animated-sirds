@@ -1,15 +1,14 @@
-package nl.joerivandervelde.depthmap;
+package nl.joerivandervelde.asirds.depthmap;
 
-import nl.joerivandervelde.asirds.GifSequenceWriter;
-import nl.joerivandervelde.asirds.ImageFrame;
-import nl.joerivandervelde.asirds.Pixel;
+import nl.joerivandervelde.asirds.gif.GifSequenceWriter;
+import nl.joerivandervelde.asirds.util.ImageFrame;
+import nl.joerivandervelde.asirds.util.Pixel;
 
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import static nl.joerivandervelde.asirds.AnimatedSIRDS.PixelsToIntMatrixRGBA;
 

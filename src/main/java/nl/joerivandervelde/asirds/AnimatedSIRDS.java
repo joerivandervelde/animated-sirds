@@ -1,5 +1,11 @@
 package nl.joerivandervelde.asirds;
 
+import nl.joerivandervelde.asirds.gif.GifSequenceWriter;
+import nl.joerivandervelde.asirds.gif.ReadGIF;
+import nl.joerivandervelde.asirds.util.ImageFrame;
+import nl.joerivandervelde.asirds.util.Pixel;
+import nl.joerivandervelde.asirds.util.Thimbleby;
+
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
@@ -12,9 +18,25 @@ public class AnimatedSIRDS {
 
     File input;
     File output;
-    boolean noisy; // new random image for each frame, or reuse the same each time
 
-    final static boolean COLOR_IMG = false;
+    /*
+    new random image for embedding depth map for each frame ('noisy')
+    or reuse the same image each time ('calm')
+     */
+    boolean noisy;
+
+    /*
+    rescale image depth values to 0-255 or leave as is (e.g. 12 to 83)
+    for regular images, rescaling emphasizes the available depth better
+    but for animations, depth differences may be lost between frames
+    so here, we use a 'fixed' depth scale of 0-255 instead of 'dynamic'
+     */
+    private static final boolean FIXED_DEPTH_SCALE = true;
+
+    /*
+    if true, allow full ARGB space instead of monochrome image writing
+     */
+    private static final boolean COLOR_IMG = false;
 
     public AnimatedSIRDS(File input, File output, boolean noisy)
     {
@@ -68,6 +90,13 @@ public class AnimatedSIRDS {
                         depthMin = img[i][j][0];
                     }
                 }
+            }
+
+            if(FIXED_DEPTH_SCALE)
+            {
+                //System.out.println("applying fixed depth scale, depthMin from " + depthMin + " to 0 and depthMax " + depthMax + " to 255");
+                depthMin = 0;
+                depthMax = 255;
             }
 
             // scale depth map to 0-1

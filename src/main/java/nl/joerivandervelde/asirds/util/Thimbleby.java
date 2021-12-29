@@ -1,4 +1,4 @@
-package nl.joerivandervelde.asirds;
+package nl.joerivandervelde.asirds.util;
 
 import java.awt.image.WritableRaster;
 import java.util.Random;
@@ -42,8 +42,7 @@ public class Thimbleby {
      * @param atX
      * @param atY
      */
-    private static void DrawSquare(Pixel[][] rstr, int atX, int atY,
-                                   short color) {
+    private static void DrawSquare(Pixel[][] rstr, int atX, int atY, short color) {
         for (int x = -3; x <= 3; x++)
             for (int y = -3; y <= 3; y++)
                 rstr[atX + x][atY + y] = new Pixel(color);
@@ -56,8 +55,7 @@ public class Thimbleby {
      * @param Z
      * @return
      */
-    public static Pixel[][] DrawAutoStereogram(float Z[][],
-                                             WritableRaster embedIn) {
+    public static Pixel[][] DrawAutoStereogram(float Z[][], WritableRaster embedIn) {
         int maxX = Z.length;
         int maxY = Z[0].length;
         Pixel[][] out = new Pixel[maxX][maxY];
@@ -104,8 +102,6 @@ public class Thimbleby {
                     if(same[x]-x < shiftXmin) { shiftXmin = same[x]-x; }
                 }
             }
-
-            // TODO based on frame and depth, move pixels / introduce new ??
             Pixel[] pix = new Pixel[maxX];
             for (int x = maxX - 1; x >= 0; x--) {
                 if (same[x] == x) {
@@ -128,5 +124,4 @@ public class Thimbleby {
         DrawSquare(out, maxX / 2 + far / 2, maxY * 19 / 20, (short)0);
         return out;
     }
-
 }

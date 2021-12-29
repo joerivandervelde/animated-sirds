@@ -1,4 +1,4 @@
-package nl.joerivandervelde.asirds;
+package nl.joerivandervelde.asirds.util;
 
 public class Pixel {
     public short R;
@@ -25,6 +25,4 @@ public class Pixel {
         this.G = G;
         this.B = B;
     }
-
-
 }
