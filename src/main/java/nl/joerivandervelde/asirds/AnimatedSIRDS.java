@@ -26,6 +26,11 @@ public class AnimatedSIRDS {
     boolean noisy;
 
     /*
+    if true, allow full ARGB space instead of monochrome image writing
+    */
+    boolean color = true;
+
+    /*
     rescale image depth values to 0-255 or leave as is (e.g. 12 to 83)
     for regular images, rescaling emphasizes the available depth better
     but for animations, depth differences may be lost between frames
@@ -33,16 +38,13 @@ public class AnimatedSIRDS {
      */
     private static final boolean FIXED_DEPTH_SCALE = true;
 
-    /*
-    if true, allow full ARGB space instead of monochrome image writing
-     */
-    private static final boolean COLOR_IMG = false;
-
-    public AnimatedSIRDS(File input, File output, boolean noisy)
+    public AnimatedSIRDS(File input, File output, boolean noisy, boolean color)
     {
         this.input = input;
         this.output = output;
         this.noisy = noisy;
+        this.color = color;
+
         if(output.exists())
         {
             output.delete();
@@ -112,7 +114,7 @@ public class AnimatedSIRDS {
             Pixel[][] sis = Thimbleby.DrawAutoStereogram(Z, noisy ? null : embedIn.getRaster());
             BufferedImage bi = null;
 
-            if(COLOR_IMG) {
+            if(color) {
                 int[] sisToInt = PixelsToIntMatrixRGBA(sis);
                 DataBufferInt buffer = new DataBufferInt(sisToInt, sisToInt.length);
                 int[] bandMasks = {0xFF0000, 0xFF00, 0xFF, 0xFF000000}; // ARGB (yes, ARGB, as the masks are R, G, B, A always) order

@@ -108,7 +108,7 @@ public class Thimbleby {
                     if(shiftViz)
                         pix[x] = new Pixel(new int[]{255, 0, 0});
                     else
-                        pix[x] = embedIn == null ? new Pixel((short)rng.nextInt(256)) : new Pixel(embedIn.getPixel(x, y, (int[]) null));
+                        pix[x] = embedIn == null ? new Pixel((short)rng.nextInt(256), (short)rng.nextInt(256), (short)rng.nextInt(256)) : new Pixel(embedIn.getPixel(x, y, (int[]) null));
 
                 } else {
                     if(shiftViz)
