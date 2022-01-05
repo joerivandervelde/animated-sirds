@@ -28,7 +28,12 @@ public class AnimatedSIRDS {
     /*
     if true, allow full ARGB space instead of monochrome image writing
     */
-    boolean color = true;
+    boolean color;
+
+    /*
+    if true, lower resolution (but not image size)
+     */
+    boolean lowRes;
 
     /*
     rescale image depth values to 0-255 or leave as is (e.g. 12 to 83)
@@ -38,12 +43,13 @@ public class AnimatedSIRDS {
      */
     private static final boolean FIXED_DEPTH_SCALE = true;
 
-    public AnimatedSIRDS(File input, File output, boolean noisy, boolean color)
+    public AnimatedSIRDS(File input, File output, boolean noisy, boolean color, boolean lowRes)
     {
         this.input = input;
         this.output = output;
         this.noisy = noisy;
         this.color = color;
+        this.lowRes = lowRes;
 
         if(output.exists())
         {
@@ -112,6 +118,11 @@ public class AnimatedSIRDS {
             }
 
             Pixel[][] sis = Thimbleby.DrawAutoStereogram(Z, noisy ? null : embedIn.getRaster());
+
+            if(lowRes){
+                sis = lowResPass(sis);
+            }
+
             BufferedImage bi = null;
 
             if(color) {
@@ -166,6 +177,22 @@ public class AnimatedSIRDS {
             {
                 out[(j*in.length)+i] = (byte) (in[i][j].B);
             }
+        }
+        return out;
+    }
+
+    public Pixel[][] lowResPass(Pixel[][] in)
+    {
+        Pixel[][] out = new Pixel[in.length][in[0].length];
+        for(int i = 0; i < (in.length-1); i++) {
+            for (int j = 0; j < in[i].length-1; j++) {
+                out[i][j] = in[i][j];
+                out[i+1][j] = in[i][j];
+                out[i][j+1] = in[i][j];
+                out[i+1][j+1] = in[i][j];
+                j++;
+            }
+            i++;
         }
         return out;
     }
