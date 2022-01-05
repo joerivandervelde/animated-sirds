@@ -1,12 +1,14 @@
 # Exploring SIRDS animations
 
-## Introduction
+## What are SIRDS
 A single-image random-dot stereogram (SIRDS) is a type of [autostereogram](https://en.wikipedia.org/wiki/Autostereogram).
 In a SIRDS, a three-dimensional scene is contained in one image (whereas [stereograms](https://en.wikipedia.org/wiki/Stereoscopy) use two).
 The shape and depth information of the scene is expressed by a random dot pattern for each eye separately.
 When viewed properly, the scene hidden in the image is revealed to the observer.
 SIRDS are usually still, but a sequence of images may form an animated SIRDS (ASIRDS).
 But what determines a successful ASIRDS?
+We can do some highly subjective experiments to get a clue.
+But let's start at the beginning.
 
 ## How to view a SIRDS
 
@@ -32,7 +34,7 @@ This will be our reference image.
 
 ![a-sphere-r0.4-d0.1-noisy.gif](gifs/a-sphere-r0.4-d0.1-noisy.gif)
 
-## Question 1: reusing the pattern
+## Experiment 1: reusing the pattern
 
 In the reference image, we generate a new random dot pattern for each frame.
 This seems to be the norm for these type of animations.
@@ -47,7 +49,7 @@ However, background echos from the stereoscopic encoding technique seem to make 
 
 ![b-sphere-r0.4-d0.1-calm.gif](gifs/b-sphere-r0.4-d0.1-calm.gif)
 
-## Question 2: no depth scaling
+## Experiment 2: no depth scaling
 
 What would happen if we disable the scaling of the grayscale depth values with distance?
 The input image is similar to that of before, except the sphere is equally bright at all positions.
@@ -59,9 +61,9 @@ So depth scaling is indeed important.
 
 ![c-sphere-r0.4-d1.0-noisy.gif](gifs/c-sphere-r0.4-d1.0-noisy.gif)
 
-## Question 3: no size scaling
+## Experiment 3: no size scaling
 
-Finally, what happens if we disable distance scaling of the sphere's radius but leave depth scaling untouched?
+What happens if we disable distance scaling of the sphere's radius but leave depth scaling untouched?
 Does the sphere's movement still appear as circular despite the lack of shape information?
 The input image would look like this:
 
@@ -72,17 +74,34 @@ However, instead of a clear circular orbit, the sphere seems to emerge from the 
 
 ![d-sphere-r1.0-d0.1-noisy.gif](gifs/d-sphere-r1.0-d0.1-noisy.gif)
 
-## Question 4: color vs monochrome
+## Experiment 4: color vs monochrome
 
-Reference image
+Would a colored ASIRDS be easier to view than a monochrome one?
+Let's use the reference image from before.
 
 ![a-sphere-r0.4-d0.1.gif](gifs/a-sphere-r0.4-d0.1.gif)
 
-Color SIRDS
+Instead of the monochrome palette used so far, we can also use random RGB colors.
+Is the resulting animation a better experience than the reference?
+color somehow more bland, but also smoother.
 
 ![e-sphere-color-noisy.gif](gifs/e-sphere-color-noisy.gif)
 
+## Experiment 5: low vs normal resolution
+
+Finally, would image resolution make a difference in viewing?
+Again we use the reference image.
+
+![a-sphere-r0.4-d0.1.gif](gifs/a-sphere-r0.4-d0.1.gif)
+
+This time, we lower the resolution by copying every other pixel to its neighbouring position.
+The image width and height do not change, but one pixel is now the size of four, and three are lost.
+While the sphere is trackable, the depth effect is surprisingly awkward to view, as if you cannot focus properly.
+
+![f-sphere-lowres-noisy.gif](gifs/f-sphere-lowres-noisy.gif)
+
 ## Conclusion
 
-A convincing animated SIRDS requires both depth scaling proportional to object size and a fresh random dot pattern for each frame.
-TODO Image colors and resolution
+A convincing animated SIRDS seems to depend on depth scaling proportional to object size, a fresh random dot pattern for each frame, and a high (or high enough) image resolution.
+The color palette used does not seem to matter much.
+These conclusions, based on only one input image and one observer, are obviously not scientific and should be regarded as pure conjecture.
