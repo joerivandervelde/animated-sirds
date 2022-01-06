@@ -16,6 +16,9 @@ import java.util.Random;
 
 public class AnimatedSIRDS {
 
+    /*
+    input and output animated GIFs
+     */
     File input;
     File output;
 
@@ -43,6 +46,14 @@ public class AnimatedSIRDS {
      */
     private static final boolean FIXED_DEPTH_SCALE = true;
 
+    /**
+     * Constructor
+     * @param input
+     * @param output
+     * @param noisy
+     * @param color
+     * @param lowRes
+     */
     public AnimatedSIRDS(File input, File output, boolean noisy, boolean color, boolean lowRes)
     {
         this.input = input;
@@ -57,6 +68,10 @@ public class AnimatedSIRDS {
         }
     }
 
+    /**
+     * start the conversion from depth map to animated SIRDS
+     * @throws Exception
+     */
     public void convert() throws Exception {
         System.out.println("load input gif...");
         FileInputStream fis = new FileInputStream(input);
@@ -69,12 +84,11 @@ public class AnimatedSIRDS {
 
         System.out.println("set up gif sequence output writer...");
         ImageOutputStream fos = new FileImageOutputStream(output);
-        GifSequenceWriter writer =
-                new GifSequenceWriter(fos, imgf[0].getImage().getType(), imgf[0].getDelay(), true);
+        GifSequenceWriter writer = new GifSequenceWriter(fos, imgf[0].getImage().getType(), imgf[0].getDelay(), true);
         System.out.println("delay = " + imgf[0].getDelay());
 
-
         System.out.println("transform to sirds...");
+        boolean grayScaleWarningGiven = false;
         for(int f=0; f<imgf.length; f++)
         {
             BufferedImage nextImage = imgf[f].getImage();
@@ -87,9 +101,9 @@ public class AnimatedSIRDS {
                 for (int j = 0; j < raster.getHeight(); j++) {
                     img[i][j] = raster.getPixel(i, j, (int[]) null);
 
-                    if (!(img[i][j][0] == img[i][j][1] &&
-                            img[i][j][1] == img[i][j][2])) {
-                        //System.out.println("pixel not greyscale: " + img[i][j][0] + ", " + img[i][j][1] + ", " + img[i][j][2]);
+                    if (!(img[i][j][0] == img[i][j][1] && img[i][j][1] == img[i][j][2]) && !grayScaleWarningGiven) {
+                        System.out.println("WARNING: at least one pixel in depth map did not a have grayscale value!");
+                        grayScaleWarningGiven = true;
                     }
                     if (img[i][j][0] > depthMax) {
                         depthMax = img[i][j][0];
@@ -102,7 +116,6 @@ public class AnimatedSIRDS {
 
             if(FIXED_DEPTH_SCALE)
             {
-                //System.out.println("applying fixed depth scale, depthMin from " + depthMin + " to 0 and depthMax " + depthMax + " to 255");
                 depthMin = 0;
                 depthMax = 255;
             }
@@ -123,12 +136,12 @@ public class AnimatedSIRDS {
                 sis = lowResPass(sis);
             }
 
-            BufferedImage bi = null;
+            BufferedImage bi;
 
             if(color) {
                 int[] sisToInt = PixelsToIntMatrixRGBA(sis);
                 DataBufferInt buffer = new DataBufferInt(sisToInt, sisToInt.length);
-                int[] bandMasks = {0xFF0000, 0xFF00, 0xFF, 0xFF000000}; // ARGB (yes, ARGB, as the masks are R, G, B, A always) order
+                int[] bandMasks = {0xFF0000, 0xFF00, 0xFF, 0xFF000000}; // band masks for R, G, B, A
                 WritableRaster wraster = Raster.createPackedRaster(buffer, raster.getWidth(), raster.getHeight(), raster.getWidth(), bandMasks, null);
                 ColorModel cm = ColorModel.getRGBdefault();
                 bi = new BufferedImage(cm, wraster, cm.isAlphaPremultiplied(), null);
@@ -137,7 +150,7 @@ public class AnimatedSIRDS {
             else{
                 byte[] sisToInt = PixelsToIntMatrixGrayscale(sis);
                 DataBufferByte buffer = new DataBufferByte(sisToInt, sisToInt.length);
-                int[] bandMasks = {0xFF}; // only one for grayscale
+                int[] bandMasks = {0xFF}; // band mask for grayscale
                 WritableRaster wraster = Raster.createPackedRaster(buffer, raster.getWidth(), raster.getHeight(), raster.getWidth(), bandMasks, null);
                 bi = new BufferedImage(raster.getWidth(), raster.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
                 bi.setData(wraster);
@@ -147,9 +160,13 @@ public class AnimatedSIRDS {
         }
         writer.close();
         fos.close();
-
     }
 
+    /**
+     * convert pixel array to packed int array for data buffer
+     * @param in
+     * @return
+     */
     public static int[] PixelsToIntMatrixRGBA(Pixel[][] in)
     {
         int[] out = new int[in.length * in[0].length];
@@ -181,8 +198,13 @@ public class AnimatedSIRDS {
         return out;
     }
 
-    public Pixel[][] lowResPass(Pixel[][] in)
-    {
+    /**
+     * double every pixel unto its neighbour,
+     * essentially halving the resolution
+     * @param in
+     * @return
+     */
+    public Pixel[][] lowResPass(Pixel[][] in) {
         Pixel[][] out = new Pixel[in.length][in[0].length];
         for(int i = 0; i < (in.length-1); i++) {
             for (int j = 0; j < in[i].length-1; j++) {
@@ -197,8 +219,14 @@ public class AnimatedSIRDS {
         return out;
     }
 
-    public BufferedImage rndImg(int w, int h)
-    {
+    /**
+     * create random dot pattern to embed SIRDS
+     * can be reused for each frame to create 'calm' SIRDS
+     * @param w
+     * @param h
+     * @return
+     */
+    public BufferedImage rndImg(int w, int h) {
         Random rng = new Random();
         BufferedImage out = new BufferedImage(w, h,
                 BufferedImage.TYPE_INT_RGB);

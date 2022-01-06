@@ -5,6 +5,16 @@ import nl.joerivandervelde.asirds.depthmap.MakeDepthMap;
 import java.io.File;
 
 public class Main {
+
+    /**
+     * re-create all graphics used in README.md
+     * ....except the first non-animated SIRDS image
+     * which is created by taking the first frame from
+     * the reference images using Preview 11.0 (Apple Inc.)
+     *
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception
     {
 
