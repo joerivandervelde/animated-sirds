@@ -1,24 +1,26 @@
 # Exploring SIRDS animations
 
 ## What are SIRDS
-A single-image random-dot stereogram (SIRDS) is a type of [autostereogram](https://en.wikipedia.org/wiki/Autostereogram).
-In a SIRDS, a three-dimensional scene is contained in one image (whereas [stereograms](https://en.wikipedia.org/wiki/Stereoscopy) use two).
-The shape and depth information of the scene is expressed by a random dot pattern for each eye separately.
-When viewed properly, the scene hidden in the image is revealed to the observer.
-SIRDS are usually still, but a sequence of images may form an animated SIRDS (ASIRDS).
-But what determines a successful ASIRDS?
-We can do some highly subjective experiments to get a clue.
+[Stereograms](https://en.wikipedia.org/wiki/Stereoscopy) are two images that form three-dimensional scenes with a depth effect when overlapped.
+In an [autostereogram](https://en.wikipedia.org/wiki/Autostereogram), a 3D scene is contained in one image by repeating narrow strips.
+A single-image random-dot stereogram (SIRDS) is type of autostereogram in which these strips are random dot patterns.
+While appearing like nothing but static noise, a hidden scene will be revealed to the observer when the image is viewed correctly.
+A SIRDS is usually a still image, but a sequence of images may form an animated SIRDS (ASIRDS).
+But what determines whether an ASIRDS looks good or not?
+We can do some highly subjective experiments to perhaps get a clue.
 But let's start at the beginning.
 
 ## How to view a SIRDS
 
-Let's take a simple image of a sphere. The grayscale values act like a depth map, where white is closest and black is farthest.
+Let's take a simple image of a sphere.
+The grayscale values act like a depth map, where white is closest and black is farthest.
 
 ![sphere-oneframe.gif](gifs/sphere-oneframe.gif)
 
 We then convert the image into a SIRDS.
 There sphere can be seen again by letting the focal point of your eyesight move past the screen until the black dots overlap.
-Let your eyes slowly adjust to the image. If you are wearing eyeglasses, taking them off might make this much easier.
+Let your eyes adjust to the depth effect of the image.
+If you are wearing eyeglasses, taking them off might make this easier.
 
 ![sphere-oneframe-sirds.gif](gifs/sphere-oneframe-sirds.gif)
 
