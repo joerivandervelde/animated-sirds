@@ -1,13 +1,14 @@
-# Exploring SIRDS animations
+# Determinants of convincing SIRDS animations
 
-## What are SIRDS
-[Stereograms](https://en.wikipedia.org/wiki/Stereoscopy) are two images that form three-dimensional scenes with a depth effect when overlapped.
+## SIRDS in a nutshell
+[Stereograms](https://en.wikipedia.org/wiki/Stereoscopy) consist of two images that can merge to produce three-dimensional scenes.
+This effect caused by providing differential depth information to your eyes.
 In an [autostereogram](https://en.wikipedia.org/wiki/Autostereogram), a 3D scene is contained in one image by repeating narrow strips.
 A single-image random-dot stereogram (SIRDS) is type of autostereogram in which these strips are random dot patterns.
-While appearing like nothing but static noise, a hidden scene will be revealed to the observer when the image is viewed correctly.
-A SIRDS is usually a still image, but a sequence of images may form an animated SIRDS (ASIRDS).
+At first glance, SIRDS resemble random static noise, but a hidden scene will be revealed when the image is viewed correctly.
+SIRDS are usually still, but multiple images may be concatenated into an animated SIRDS (ASIRDS).
 But what determines whether an ASIRDS looks good or not?
-We can do some highly subjective experiments to perhaps get a clue.
+We can do some highly subjective experiments to perhaps get some clues.
 But let's start at the beginning.
 
 ## How to view a SIRDS
@@ -31,7 +32,7 @@ To achieve this in a simple way, we let the both the radius of the sphere and it
 
 ![a-sphere-r0.4-d0.1.gif](gifs/a-sphere-r0.4-d0.1.gif)
 
-When converted to an animated SIRDS (ASIRDS), the result is a smoothly orbiting sphere with a convincing depth effect that is easy to follow.
+When converted into an ASIRDS, the result is a smoothly orbiting sphere with a convincing depth effect that is easy to follow.
 This will be our reference image.
 
 ![a-sphere-r0.4-d0.1-noisy.gif](gifs/a-sphere-r0.4-d0.1-noisy.gif)
@@ -41,25 +42,24 @@ This will be our reference image.
 In the reference image, we generate a new random dot pattern for each frame.
 This seems to be the norm for these type of animations.
 But is that necessary?
-What happens if we simply re-use the random dot pattern from the first frame, for all following frames?
-Let's use the same starting image as before.
+Let's use the reference image from before.
 
 ![a-sphere-r0.4-d0.1.gif](gifs/a-sphere-r0.4-d0.1.gif)
 
-But now we re-use the pattern for each frame. The result is a calmer image where the sphere can still be seen moving.
+What happens when we simply re-use the random dot pattern from the first frame, for all following frames, when converting to an ASIRDS?
+The result is a calmer image where the sphere can still be seen moving.
 However, background echos from the stereoscopic encoding technique seem to make it nearly impossible to track the sphere in 3D.
 
 ![b-sphere-r0.4-d0.1-calm.gif](gifs/b-sphere-r0.4-d0.1-calm.gif)
 
 ## Experiment 2: no depth scaling
 
-What would happen if we disable the scaling of the grayscale depth values with distance?
+What happens when we disable the scaling of the grayscale depth values with distance?
 The input image is similar to that of before, except the sphere is equally bright at all positions.
 
 ![c-sphere-r0.4-d1.0.gif](gifs/c-sphere-r0.4-d1.0.gif)
 
 The result is at first glance similar to our reference image, but tracking the sphere with your eyes around its farthest point feels less natural and requires more effort.
-So depth scaling is indeed important.
 
 ![c-sphere-r0.4-d1.0-noisy.gif](gifs/c-sphere-r0.4-d1.0-noisy.gif)
 
@@ -71,39 +71,38 @@ The input image would look like this:
 
 ![d-sphere-r1.0-d0.1.gif](gifs/d-sphere-r1.0-d0.1.gif)
 
-When viewed as an animated SIRDS, the animation is smooth and easy to follow.
-However, instead of a clear circular orbit, the sphere seems to emerge from the background, move to the right, submerge into the background, and later re-appear on the left.
+When viewed as an ASIRDS, the animation is smooth and easy to follow.
+However, instead of a circular orbit, the sphere seems to emerge from the background, move to the right, submerge into the background, and later re-appear on the left.
 
 ![d-sphere-r1.0-d0.1-noisy.gif](gifs/d-sphere-r1.0-d0.1-noisy.gif)
 
 ## Experiment 4: color vs monochrome
 
 Would a colored ASIRDS be easier to view than a monochrome one?
-Let's use the reference image from before.
+Let's use our reference image as a starting point.
 
 ![a-sphere-r0.4-d0.1.gif](gifs/a-sphere-r0.4-d0.1.gif)
 
-Instead of the monochrome palette used so far, we can also use random RGB colors.
-Is the resulting animation a better experience than the reference?
-color somehow more bland, but also smoother.
+But instead of the monochrome color palette used so far, we use random RGB colors.
+Compared to the reference ASIRDS, the colors seem to make the scene more smooth and subtle, but somehow also more bland.
 
 ![e-sphere-color-noisy.gif](gifs/e-sphere-color-noisy.gif)
 
 ## Experiment 5: low vs normal resolution
 
-Finally, would image resolution make a difference in viewing?
+Finally, we can test if image resolution makes a difference in viewing experience.
 Again we use the reference image.
 
 ![a-sphere-r0.4-d0.1.gif](gifs/a-sphere-r0.4-d0.1.gif)
 
 This time, we lower the resolution by copying every other pixel to its neighbouring position.
 The image width and height do not change, but one pixel is now the size of four, and three are lost.
-While the sphere is trackable, the depth effect is surprisingly awkward to view, as if you cannot focus properly.
+While the sphere is trackable, the depth effect is surprisingly awkward to view, as if your eyes cannot focus properly on the object.
 
 ![f-sphere-lowres-noisy.gif](gifs/f-sphere-lowres-noisy.gif)
 
-## Conclusion
+## Conclusions
 
-A convincing animated SIRDS seems to depend on depth scaling proportional to object size, a fresh random dot pattern for each frame, and a high (or high enough) image resolution.
-The color palette used does not seem to matter much.
-These conclusions, based on only one input image and one observer, are obviously not scientific and should be regarded as pure conjecture.
+A credible ASIRDS seems to depend on depth scaling proportional to object size, a fresh random dot pattern for each frame, and a high (or high enough) image resolution.
+The used color palette does not seem to matter much.
+These conclusions, based on a single input image and handful of opinions by one observer, should be regarded as speculation.
